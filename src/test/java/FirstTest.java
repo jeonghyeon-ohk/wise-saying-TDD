@@ -30,17 +30,21 @@ public class FirstTest {
 
         // 출력값을 체크
     }
+
     @Test
     @DisplayName("명령을 여러번 입력할 수 있다.")
     void t4() {
         String out = TestBot.run("""
                 등록
+                현재를 사랑하라.
+                작자미상
                 등록
-                종료
+                현재를 사랑하라.
+                작자미상
                 """);
 
         // "명령 )"의 출현 횟수를 계산
-        long count = out.split("명령 \\)").length - 1;
+        long count = out.split("명령 \\)").length - 1; // result == ["", " 등록\n", " 등록\n", "\n"] 이므로 4-1
         // 검증
         assertThat(count).isEqualTo(3); // 기대하는 횟수에 따라 값 수정
     }
@@ -65,7 +69,7 @@ public class FirstTest {
                 """);
 
         assertThat(out)
-                .contains("명언 : ", "작가 : ");
+                .containsSubsequence("명언 : ", "작가 : ");
 
     }
 
@@ -83,4 +87,43 @@ public class FirstTest {
 
     }
 
+    @Test
+    @DisplayName("등록 - 명언 2개 입력, 명언 번호가 증가")
+    void t8() {
+        String out = TestBot.run("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                등록
+                현재를 사랑하라.
+                작자미상
+                등록
+                현재를 사랑하라.
+                작자미상
+                """);
+
+        assertThat(out)
+                .contains("1번 명언이 등록되었습니다.")
+                .contains("2번 명언이 등록되었습니다.")
+                .contains("3번 명언이 등록되었습니다.");
+    }
+
+    @Test
+    @DisplayName("목록 - 명언 2개 입력하면 입력된 명언들이 출력된다.")
+    void t9() {
+        String out = TestBot.run("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                등록
+                과거에 집착하지 마라.
+                작자미상
+                목록
+                """);
+
+        assertThat(out)
+                .contains("번호 / 작가 / 명언")
+                .contains("----------------------")
+                .containsSubsequence("2 / 작자미상 / 과거에 집착하지 마라.", "1 / 작자미상 / 현재를 사랑하라.");
+    }
 }

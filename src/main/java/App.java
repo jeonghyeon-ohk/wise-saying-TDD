@@ -1,31 +1,36 @@
+import domain.wiseSaying.SystemController;
+import domain.wiseSaying.WiseSayingController;
+
 import java.util.Scanner;
 
 public class App {
 
     private final Scanner sc;
+    private final WiseSayingController wiseSayingController;
+    private final SystemController systemController;
 
     public App(Scanner sc) {
         this.sc = sc;
+        wiseSayingController = new WiseSayingController(sc);
+        systemController = new SystemController();
     }
 
     public void run() {
         System.out.println("== 명언 앱 ==");
 
         while (true) {
-
             System.out.println("명령 ) ");
-            String cmd = sc.nextLine(); //
+            String cmd = sc.nextLine();
 
-            if (cmd.equals("종료")) {
-                System.out.println("명언앱을 종료합니다.");
-                break;
-            }
-            else if(cmd.equals("등록")){
-                System.out.println("명언 : ");
-                System.out.println("작가 : ");
-                System.out.println("1번 명언이 등록되었습니다.");
+            switch (cmd) {
+                case "등록" -> wiseSayingController.actionWrite();
+                case "목록" -> wiseSayingController.actionPrint();
+                case "종료" -> {
+                    systemController.exit();
+                    return;
+                }
+                default -> System.out.println("올바른 명령이 아닙니다.");
             }
         }
-
     }
 }
